@@ -172,8 +172,11 @@ async function enterMemory(id, cell, btn, k) {
   setRect(fly, C); fly.classList.add('centered');
   await wait(860);
 
+  // the rest of the homepage fades to white around the card
+  $('veil').classList.add('on');
+  await wait(900);
+
   // the card crumbles into fine grains while the street forms grain by grain
-  await wait(120);
   sfx.swell();
   $('mem-title').textContent = m.title; $('mem-date').textContent = m.date; $('mem-blurb').textContent = m.blurb;
   setTrack(-1, true);
