@@ -15,27 +15,27 @@ const MEMORIES = {
     items: [
       { name: 'the balls', img: 'assets/balls.webp', label: 'location · hayashi dept store',
         note: 'we spent so much time wandering through every floor of this department store, wanting to buy everything we saw. it was such a nice, cool break from the heat and humidity.', z: 5,
-        pos: { left: '76%', top: '50%', size: 'min(210px, 30vw)' }, mpos: { left: '80%', top: '64%', size: '28vw' },
+        pos: { left: '76%', top: '50%', size: 'min(210px, 30vw)' }, mpos: { left: '75%', top: '61%', size: '30vw' },
         song: { title: 'Oh, My Life', artist: 'Cosmos People', cover: 'assets/cover-ohmylife.jpg', spotify: 'https://open.spotify.com/track/3Tflpdjw8qA8WjYR3FgYmq' } },
       { name: 'the snails', img: 'assets/snails.webp', label: 'location · snail alley',
         note: 'a quiet, maze-like alley full of charming small businesses! we spent a while hunting for snail art (and real snails), and part of me felt like a little kid again.',
-        pos: { left: '20%', top: '44%', size: 'min(240px, 34vw)' }, mpos: { left: '20%', top: '64%', size: '30vw' },
+        pos: { left: '20%', top: '44%', size: 'min(240px, 34vw)' }, mpos: { left: '25%', top: '62%', size: '32vw' },
         song: { title: 'Maybe Maybe', artist: 'The Chairs', cover: 'assets/cover-maybe.jpg', spotify: 'https://open.spotify.com/track/55e4I1RfHjQT1XAf7glB2J' } },
       { name: 'the surfboards', img: 'assets/surfboards.webp', label: 'location · waiao beach',
         note: 'this was my first time surfing! i never knew something could feel so calming and so frightening at the same time. thankfully the waves were gentle, and i found out i have a great sense of balance!', tilt: '-20deg',
-        pos: { left: '30%', top: '74%', size: 'min(380px, 44vw)' }, mpos: { left: '28%', top: '86%', size: '40vw' },
+        pos: { left: '30%', top: '74%', size: 'min(380px, 44vw)' }, mpos: { left: '28%', top: '84%', size: '40vw' },
         song: { title: '海浪', artist: 'deca joins', cover: 'assets/cover-hailang.jpg', spotify: 'https://open.spotify.com/track/5EpLeWSwqOG0mZW0R4WdKQ' } },
       { name: 'the lantern', img: 'assets/lantern.webp', label: 'location · jiufen',
         note: 'we took a bus up the steep, winding mountain road to Jiufen, and arrived just in time to catch the sunset (and snap a million photos)',
-        pos: { left: '29%', top: '15%', size: 'min(230px, 32vw)' }, mpos: { left: '15%', top: '24%', size: '24vw' },
+        pos: { left: '29%', top: '15%', size: 'min(230px, 32vw)' }, mpos: { left: '16%', top: '21%', size: '26vw' },
         song: { title: 'Bluebird', artist: '落日飛車 Sunset Rollercoaster', cover: 'assets/cover-bluebird.jpg', spotify: 'https://open.spotify.com/track/3jgZYDYIEthcx7BrDOzPCl' } },
       { name: 'the walking man', img: 'assets/walking-man.webp', label: 'location · bar pine松',
         note: "this was without a doubt one of the best bars i've been to. the cocktails were so interesting and well thought out, and the menu design was insanely creative.",
-        pos: { left: 'max(79%, calc(50% + 330px))', top: '82%', size: 'min(240px, 32vw)' }, mpos: { left: '74%', top: '86%', size: '30vw' },
+        pos: { left: 'max(79%, calc(50% + 330px))', top: '82%', size: 'min(240px, 32vw)' }, mpos: { left: '74%', top: '86%', size: '32vw' },
         song: { title: 'Vanilla', artist: '落日飛車 Sunset Rollercoaster', cover: 'assets/cover-vanilla.jpg', spotify: 'https://open.spotify.com/track/5GYVRgPzH63t7i0873LwYm' } },
       { name: 'the mirror', img: 'assets/mirror.webp', label: 'location · chengnan village',
         note: "the first full day of our trip. we'd just finished surfing, then had what might be the best bowl of chicken noodle soup of my life, served right in front of someone's home",
-        pos: { left: '72%', top: '16%', size: 'min(230px, 30vw)' }, mpos: { left: '84%', top: '26%', size: '24vw' },
+        pos: { left: '72%', top: '16%', size: 'min(230px, 30vw)' }, mpos: { left: '83%', top: '21%', size: '26vw' },
         song: { title: 'Finger', artist: 'Elephant Gym', cover: 'assets/cover-finger.jpg', spotify: 'https://open.spotify.com/track/3Of8Z34kYIFKzm025HtkiH' } }
     ]
   }
@@ -396,7 +396,7 @@ window.addEventListener('resize', fitPlayer);
 function fillTag(i) {
   if (i < 0) { $('tag-idle').hidden = false; $('tag-playing').hidden = true; $('sp-wrap').hidden = true; fitPlayer(); return; }
   const it = current.items[i];
-  $('np-label').textContent = it.label || ('now playing · ' + it.name); $('np-title').textContent = it.song.title; $('np-artist').textContent = it.song.artist; $('np-note').textContent = it.note;
+  $('np-label').textContent = it.label || ''; $('np-label').hidden = !it.label; $('np-title').textContent = it.song.title; $('np-artist').textContent = it.song.artist; $('np-note').textContent = it.note;
   $('tag-idle').hidden = true; $('tag-playing').hidden = false;
   fitPlayer();
 }

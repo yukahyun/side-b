@@ -123,6 +123,7 @@ button{font:inherit;color:inherit}
 .hand{margin:0;font-size:21px;line-height:1.25}
 .hand.small{font-size:17px;line-height:1.4}
 .hand.tiny{font-size:15px;white-space:nowrap}
+.np-loc{margin-top:10px}
 .hand.caps{letter-spacing:.08em;text-transform:uppercase}
 
 /* floating things */
@@ -155,6 +156,9 @@ button{font:inherit;color:inherit}
   .readme-words p{font-size:13.5px}
   .playercol{left:50%;top:116px;transform:translateX(-50%) scale(.6);transform-origin:top center;animation:none}
   .explore{font-size:20px;top:12px}
+  /* on phones the page scrolls, so the objects sit below the tag instead of under it */
+  .scene{overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch}
+  .items{bottom:auto;height:max(100%,1120px)}
 }
 @media (prefers-reduced-motion:reduce){
   .dx,.dy,.sw,.dolly,.sway,.disc{animation:none}
