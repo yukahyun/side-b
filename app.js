@@ -398,6 +398,8 @@ function fillTag(i) {
   const it = current.items[i];
   $('np-label').textContent = it.label || ''; $('np-label').hidden = !it.label; $('np-title').textContent = it.song.title; $('np-artist').textContent = it.song.artist; $('np-note').textContent = it.note;
   $('tag-idle').hidden = true; $('tag-playing').hidden = false;
+  // the story eases in once the tag has turned around
+  ['np-label', 'np-note'].forEach((id) => { const el = $(id); el.classList.remove('story-in'); void el.offsetWidth; el.classList.add('story-in'); });
   fitPlayer();
 }
 function setTrack(i, silent) {

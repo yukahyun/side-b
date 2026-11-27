@@ -124,6 +124,9 @@ button{font:inherit;color:inherit}
 .hand.small{font-size:17px;line-height:1.4}
 .hand.tiny{font-size:15px;white-space:nowrap}
 .np-loc{margin-top:10px}
+.story-in{animation:storyin 1.1s ease .45s backwards}
+#np-note.story-in{animation-delay:.65s}
+@keyframes storyin{from{opacity:0;transform:translateY(5px)}}
 .hand.caps{letter-spacing:.08em;text-transform:uppercase}
 
 /* floating things */
@@ -158,5 +161,5 @@ button{font:inherit;color:inherit}
   .explore{font-size:20px;top:12px}
 }
 @media (prefers-reduced-motion:reduce){
-  .dx,.dy,.sw,.dolly,.sway,.disc{animation:none}
+  .dx,.dy,.sw,.dolly,.sway,.disc,.story-in{animation:none}
 }
