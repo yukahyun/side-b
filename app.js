@@ -171,7 +171,7 @@ async function enterMemory(id, cell, btn, k) {
   setRect(fly, C); fly.classList.add('centered');
   await wait(860);
 
-  // bloom the photo
+  // the photo fills the screen
   const z = $('zoom'); z.src = m.card.photo; z.className = 'zoom';
   setRect(z, { l: C.l + S * .14, t: C.t + S * .22, w: S * .72, h: S * .5 });
   z.style.objectPosition = '50% 45%'; z.style.opacity = '0'; z.style.filter = 'blur(10px)';
@@ -184,9 +184,18 @@ async function enterMemory(id, cell, btn, k) {
   $('veil').classList.add('on'); fly.classList.add('gone');
   await wait(1250);
 
-  // the scene
-  z.classList.add('dolly');
-  const h = $('hazy'); h.src = m.background; h.classList.add('dolly'); void h.offsetWidth; h.classList.add('on');
+  // a soft black oval fades in around the photo, then closes to black
+  const iris = $('iris'); iris.className = 'iris';
+  void iris.offsetWidth; iris.classList.add('on');
+  await wait(1500);
+  iris.classList.add('close');
+  await wait(1500);
+
+  // the street dissolves in, a few dots at a time, like drifting into a dream
+  const h = $('hazy'); h.src = m.background; h.classList.add('dolly', 'on', 'instant');
+  z.style.opacity = '0'; z.classList.remove('grow');
+  await dreamIn();
+  iris.className = 'iris';
   $('mem-title').textContent = m.title; $('mem-date').textContent = m.date; $('mem-blurb').textContent = m.blurb;
   setTrack(-1, true);
   buildItems(m);
@@ -195,13 +204,45 @@ async function enterMemory(id, cell, btn, k) {
   busy = false;
 }
 
+function dreamIn() {
+  return new Promise((done) => {
+    const cv = $('dream'), dpr = Math.min(2, window.devicePixelRatio || 1);
+    const W = window.innerWidth, H = window.innerHeight;
+    cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr);
+    const g = cv.getContext('2d');
+    g.setTransform(dpr, 0, 0, dpr, 0, 0);
+    g.globalCompositeOperation = 'source-over'; g.fillStyle = '#000'; g.fillRect(0, 0, W, H);
+    cv.className = 'dream on';
+    $('iris').className = 'iris';                      // the canvas holds the black now
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) { cv.className = 'dream'; done(); return; }
+    g.globalCompositeOperation = 'destination-out';
+    const DUR = 3200, start = performance.now();
+    (function frame(now) {
+      const t = Math.min(1, (now - start) / DUR);
+      const ease = t * t;                               // slow at first, then faster
+      const count = Math.round(14 + ease * 140);
+      for (let k = 0; k < count; k++) {
+        const x = Math.random() * W, y = Math.random() * H;
+        const r = 2 + Math.random() * (4 + ease * 26);
+        const dot = g.createRadialGradient(x, y, 0, x, y, r);
+        dot.addColorStop(0, 'rgba(0,0,0,.9)'); dot.addColorStop(1, 'rgba(0,0,0,0)');
+        g.fillStyle = dot; g.beginPath(); g.arc(x, y, r, 0, Math.PI * 2); g.fill();
+      }
+      if (t < 1) requestAnimationFrame(frame);
+      else { cv.classList.add('fade'); setTimeout(() => { cv.className = 'dream'; done(); }, 900); }
+    })(start);
+    setTimeout(() => done(), DUR * 0.55);               // let the scene start appearing mid-dream
+  });
+}
+
 async function exitMemory() {
   if (busy) return; busy = true;
   sfx.tap(); stopSpotify();
   $('memory').classList.add('closing');
   await wait(700);
+  $('dream').className = 'dream';
   $('memory').hidden = true; $('scene').hidden = true; $('scene').classList.remove('loaded');
-  $('veil').classList.remove('on'); $('hazy').className = 'hazy'; $('zoom').className = 'zoom'; $('zoom').removeAttribute('style');
+  $('veil').classList.remove('on'); $('hazy').className = 'hazy'; $('iris').className = 'iris'; $('zoom').className = 'zoom'; $('zoom').removeAttribute('style');
   $('items').innerHTML = '';
   if (lastBtn) { lastBtn.style.visibility = ''; lastBtn.style.transform = ''; lastBtn.classList.remove('up'); }
   if (lastCell) { delete lastCell.dataset.busy; lastCell.classList.remove('lifted'); }
