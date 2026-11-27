@@ -98,7 +98,7 @@ function buildGrid() {
     let inner = paper(k);
     if (id === 'readme') {
       btn.setAttribute('aria-label', 'Open read me');
-      inner += '<div class="labels" aria-hidden="true"><span>00</span><span>start here</span></div><div class="win"><img src="assets/readme-photo.jpg" alt="" style="object-position:50% 40%"><span class="holo"></span></div><p class="stamp" aria-hidden="true">READ ME</p>';
+      inner += '<div class="labels" aria-hidden="true"><span>00</span><span>read me</span></div><div class="win"><img src="assets/readme-photo.jpg" alt="" style="object-position:50% 50%"><span class="holo"></span></div><p class="stamp" aria-hidden="true">THE ARCHIVES</p>';
     } else {
       const c = MEMORIES[id].card;
       btn.setAttribute('aria-label', 'Open memory: ' + MEMORIES[id].title);
