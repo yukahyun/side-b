@@ -53,8 +53,8 @@ button{font:inherit;color:inherit}
 .readme-words{position:absolute;left:11%;right:11%;top:14%;bottom:7%;display:flex;flex-direction:column;justify-content:center;gap:12px}
 .readme-words h2{margin:0;font-weight:400;font-size:34px;line-height:1.05}
 .readme-words p{margin:0;font-size:18px;line-height:1.32}
-.pill{min-height:44px;padding:0 22px;border-radius:999px;border:1.5px dashed rgba(243,230,225,.6);background:none;color:#F3E6E1;font-size:18px;cursor:pointer}
-.pill:hover{background:rgba(243,230,225,.12)}
+.pill{min-height:44px;padding:0 6px;border:0;background:none;color:#F3E6E1;font-size:22px;cursor:pointer;text-decoration:underline;text-decoration-thickness:1.5px;text-underline-offset:6px}
+.pill:hover{opacity:.65}
 
 /* ---------- memory ---------- */
 .memory{position:fixed;inset:0;z-index:50;transition:opacity .7s ease}
