@@ -83,6 +83,14 @@ const sfx = {
   swell() { const c = audio(); if (!c) return; const t = c.currentTime, s = noise(c, 1.6), f = c.createBiquadFilter(), g = c.createGain(); f.type = 'lowpass'; f.frequency.setValueAtTime(300, t); f.frequency.exponentialRampToValueAtTime(1600, t + 1.2); env(g, t, .07, .4, 1.5); s.connect(f).connect(g).connect(c.destination); s.start(t); s.stop(t + 1.6); }
 };
 
+/* ---------- your recorded swipe, played when a card lifts out ---------- */
+const swipeSound = new Audio('assets/swipe.mp3');
+swipeSound.preload = 'auto';
+function playSwipe() {
+  try { swipeSound.currentTime = 0; swipeSound.volume = 0.85; const p = swipeSound.play(); if (p) p.catch(() => sfx.rustle()); }
+  catch (e) { sfx.rustle(); }
+}
+
 /* ---------- the sheet ---------- */
 function buildGrid() {
   const grid = $('grid');
@@ -129,7 +137,7 @@ function buildGrid() {
 }
 
 /* ---------- read me ---------- */
-function openReadme() { sfx.rustle(); $('readme').hidden = false; $('readme-close').focus(); }
+function openReadme() { playSwipe(); $('readme').hidden = false; $('readme-close').focus(); }
 function closeReadme() { sfx.tap(); $('readme').hidden = true; }
 $('readme-close').addEventListener('click', closeReadme);
 $('readme').addEventListener('click', (e) => { if (e.target === $('readme') || e.target === $('readme').firstElementChild) closeReadme(); });
@@ -142,7 +150,7 @@ function setRect(el, r) { el.style.left = r.l + 'px'; el.style.top = r.t + 'px';
 async function enterMemory(id, cell, btn, k) {
   if (busy) return; busy = true;
   const m = MEMORIES[id]; current = m; lastCell = cell; lastBtn = btn;
-  sfx.rustle();
+  playSwipe();
   cell.dataset.busy = '1'; cell.classList.add('lifted');
   btn.style.transform = 'translateY(-118%) scale(1.04)';
   await wait(520);
