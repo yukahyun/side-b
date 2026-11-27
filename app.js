@@ -186,7 +186,7 @@ async function enterMemory(id, cell, btn, k) {
   setTrack(-1, true);
   await wait(300);
   crumble(fly, 2000);
-  await wait(3850);
+  await wait(3700);
   const formed = dreamIn($('hazy'));
   await wait(450);
   buildItems(m);
