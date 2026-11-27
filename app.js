@@ -322,7 +322,7 @@ function buildItems(m) {
   const order = [...wrap.children].sort(() => Math.random() - .5);
   order.forEach((el, n) => {
     const inner = el.querySelector('.mitem-in');
-    inner.classList.add('grain');
+    inner.classList.add('dotin');
     setTimeout(() => { inner.style.opacity = '1'; grain(inner, 'in', 900 + Math.random() * 300, 11 + n * 5); }, 500 + n * 260 + Math.random() * 120);
   });
 }

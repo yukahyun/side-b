@@ -105,7 +105,7 @@ button{font:inherit;color:inherit}
 .cord{position:relative;z-index:2;width:4px;height:78px;margin:-10px 0 -14px;background:linear-gradient(90deg,#5E5239,#9A8B66 45%,#5E5239);box-shadow:2px 2px 3px rgba(60,45,30,.2);border-radius:2px}
 
 /* tag */
-.tag{position:relative;width:320px}
+.tag{position:relative;width:380px}
 .sway{transform-origin:top center;animation:sway 6s ease-in-out infinite alternate}
 @keyframes sway{from{transform:rotate(-2.5deg)}to{transform:rotate(-1deg)}}
 .tag-flip{position:relative}
@@ -122,7 +122,7 @@ button{font:inherit;color:inherit}
 #tag-idle,#tag-playing{display:flex;flex-direction:column;gap:6px}
 .hand{margin:0;font-size:21px;line-height:1.25}
 .hand.small{font-size:17px;line-height:1.4}
-.hand.tiny{font-size:15px}
+.hand.tiny{font-size:15px;white-space:nowrap}
 .hand.caps{letter-spacing:.08em;text-transform:uppercase}
 
 /* floating things */
@@ -131,7 +131,7 @@ button{font:inherit;color:inherit}
 .mitem-in{opacity:0}
 .scene.loaded .mitem-in{animation:mitemin 1.4s cubic-bezier(.2,.8,.2,1) 1.6s forwards}
 @keyframes mitemin{from{opacity:0;filter:blur(14px)}to{opacity:1;filter:blur(0)}}
-.scene.loaded .mitem-in.grain{animation:none}
+.scene.loaded .mitem-in.dotin{animation:none}
 .dx,.dy,.sw{animation-timing-function:cubic-bezier(.45,0,.55,1);animation-iteration-count:infinite;animation-direction:alternate}
 .dx{animation-name:dx}.dy{animation-name:dy}.sw{animation-name:sw}
 @keyframes dx{from{transform:translateX(calc(var(--ax) * -1))}to{transform:translateX(var(--ax))}}
