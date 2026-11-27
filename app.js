@@ -22,7 +22,8 @@ const MEMORIES = {
       { name: 'the surfboards', img: 'assets/surfboards.webp', note: '[why the surfboards go with this song]', tilt: '-20deg',
         pos: { left: '30%', top: '74%', size: 'min(380px, 44vw)' }, mpos: { left: '28%', top: '86%', size: '40vw' },
         song: { title: '海浪', artist: 'deca joins', cover: 'assets/cover-hailang.jpg', spotify: 'https://open.spotify.com/track/5EpLeWSwqOG0mZW0R4WdKQ' } },
-      { name: 'the lantern', img: 'assets/lantern.webp', note: '[why the lantern goes with this song]',
+      { name: 'the lantern', img: 'assets/lantern.webp', label: 'location · jiufen',
+        note: 'we took a bus up the steep, winding mountain road to Jiufen, and arrived just in time to catch the sunset (and snap a million photos)',
         pos: { left: '29%', top: '15%', size: 'min(230px, 32vw)' }, mpos: { left: '15%', top: '24%', size: '24vw' },
         song: { title: 'Bluebird', artist: '落日飛車 Sunset Rollercoaster', cover: 'assets/cover-bluebird.jpg', spotify: 'https://open.spotify.com/track/3jgZYDYIEthcx7BrDOzPCl' } },
       { name: 'the walking man', img: 'assets/walking-man.webp', note: '[why the walking man goes with this song]',
@@ -351,11 +352,24 @@ function stopSpotify() { spWanted = null; if (spCtl) spCtl.pause(); }
 
 /* ---------- cd player + tag ---------- */
 let flipT1 = null, flipT2 = null, discT = null;
+// shrink the player + tag just enough that the tag (with room for the spotify player) fits on short screens
+function fitPlayer() {
+  const col = document.querySelector('.playercol');
+  if (!col || isPhone()) { if (col) col.style.scale = ''; return; }
+  col.style.scale = '';
+  const r = col.getBoundingClientRect();
+  const spare = $('sp-wrap').hidden ? 92 : 0;        // keep space for the player so nothing jumps when it appears
+  const need = r.height + spare, room = window.innerHeight - r.top - 16;
+  col.style.scale = need > room ? String(Math.max(.6, room / need)) : '';
+}
+window.addEventListener('resize', fitPlayer);
+
 function fillTag(i) {
-  if (i < 0) { $('tag-idle').hidden = false; $('tag-playing').hidden = true; $('sp-wrap').hidden = true; return; }
+  if (i < 0) { $('tag-idle').hidden = false; $('tag-playing').hidden = true; $('sp-wrap').hidden = true; fitPlayer(); return; }
   const it = current.items[i];
-  $('np-thing').textContent = it.name; $('np-title').textContent = it.song.title; $('np-artist').textContent = it.song.artist; $('np-note').textContent = it.note;
+  $('np-label').textContent = it.label || ('now playing · ' + it.name); $('np-title').textContent = it.song.title; $('np-artist').textContent = it.song.artist; $('np-note').textContent = it.note;
   $('tag-idle').hidden = true; $('tag-playing').hidden = false;
+  fitPlayer();
 }
 function setTrack(i, silent) {
   track = i;

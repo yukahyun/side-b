@@ -86,7 +86,7 @@ button{font:inherit;color:inherit}
 @keyframes mfade{from{opacity:0;transform:translateY(10px)}}
 
 /* player, centred, with the cat on top */
-.playercol{position:absolute;left:calc(50% - 165px);top:max(120px,calc(50% - 300px));z-index:6;width:330px;display:flex;flex-direction:column;align-items:center;animation:mfade 1.2s ease .5s backwards}
+.playercol{position:absolute;left:calc(50% - 165px);top:max(120px,calc(50% - 300px));z-index:6;width:330px;transform-origin:top center;transition:scale .4s ease;display:flex;flex-direction:column;align-items:center;animation:mfade 1.2s ease .5s backwards}
 .cat{position:absolute;left:99px;top:-101px;width:190px;height:auto;z-index:3;pointer-events:none;filter:drop-shadow(0 4px 4px rgba(60,45,30,.25))}
 .player{position:relative;width:299px;height:303px}
 .player-art{position:absolute;inset:0;overflow:visible;filter:drop-shadow(0 10px 16px rgba(60,45,30,.2))}
