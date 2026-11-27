@@ -106,7 +106,7 @@ function buildGrid() {
     let inner = paper(k);
     if (id === 'readme') {
       btn.setAttribute('aria-label', 'Open read me');
-      inner += '<div class="labels" aria-hidden="true"><span>00</span><span>read me</span></div><div class="win"><img src="assets/readme-photo.jpg" alt="" style="object-position:50% 50%"><span class="holo"></span></div><p class="stamp" aria-hidden="true">THE ARCHIVES</p>';
+      inner += '<div class="labels" aria-hidden="true"><span>00</span><span>welcome</span></div><div class="win"><img src="assets/readme-photo.jpg" alt="" style="object-position:50% 50%"><span class="holo"></span></div><p class="stamp" aria-hidden="true">THE ARCHIVES</p>';
     } else {
       const c = MEMORIES[id].card;
       btn.setAttribute('aria-label', 'Open memory: ' + MEMORIES[id].title);
@@ -193,19 +193,33 @@ async function enterMemory(id, cell, btn, k) {
   busy = false;
 }
 
-// the card breaks up into fine grains (an SVG noise mask whose threshold rises)
+// grains: an SVG noise mask whose threshold moves, so an element appears or breaks up in fine dots
+let grainN = 0;
+function grain(el, mode, dur, seed) {
+  return new Promise((done) => {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) { done(); return; }
+    const id = 'gr' + (++grainN);
+    const f = $('dis').cloneNode(true);
+    f.id = id; f.querySelector('feTurbulence').setAttribute('seed', String(seed || grainN * 7));
+    const fn = f.querySelector('feFuncA'); fn.removeAttribute('id');
+    $('fx').append(f);
+    const set = (c) => fn.setAttribute('intercept', String(1 - 14 * c));  // grains whose noise is below c are hidden
+    set(mode === 'in' ? .92 : .18);
+    el.style.filter = `url(#${id})`;
+    const start = performance.now();
+    (function frame(now) {
+      const t = Math.min(1, (now - start) / dur);
+      set(mode === 'in' ? .92 - t * .74 : .18 + t * .74);
+      if (t < 1) { requestAnimationFrame(frame); return; }
+      if (mode === 'in') el.style.filter = '';
+      f.remove(); done();
+    })(start);
+  });
+}
+
 function crumble(el) {
-  const fn = $('dis-a'), DUR = 1000, start = performance.now();
   if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) { el.classList.add('gone'); return; }
-  fn.setAttribute('intercept', '1');
-  el.style.filter = 'url(#dis)';
-  (function frame(now) {
-    const t = Math.min(1, (now - start) / DUR);
-    const c = .18 + t * .72;                           // grains whose noise is below c vanish
-    fn.setAttribute('intercept', String(1 - 14 * c));
-    if (t < 1) requestAnimationFrame(frame);
-    else { el.style.transition = 'none'; el.classList.add('gone'); el.style.visibility = 'hidden'; el.style.filter = ''; }
-  })(start);
+  grain(el, 'out', 1000, 7).then(() => { el.style.transition = 'none'; el.classList.add('gone'); el.style.visibility = 'hidden'; el.style.filter = ''; });
 }
 
 // the background appears one fine grain at a time
@@ -296,6 +310,13 @@ function buildItems(m) {
     b.addEventListener('blur', () => el.classList.remove('hot'));
     b.addEventListener('click', () => { if (track !== i) setTrack(i); });
     wrap.append(el);
+  });
+  // each object gathers out of fine dots, one after another in a loose random order
+  const order = [...wrap.children].sort(() => Math.random() - .5);
+  order.forEach((el, n) => {
+    const inner = el.querySelector('.mitem-in');
+    inner.classList.add('grain');
+    setTimeout(() => { inner.style.opacity = '1'; grain(inner, 'in', 900 + Math.random() * 300, 11 + n * 5); }, 500 + n * 260 + Math.random() * 120);
   });
 }
 

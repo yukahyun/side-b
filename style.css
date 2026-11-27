@@ -131,6 +131,7 @@ button{font:inherit;color:inherit}
 .mitem-in{opacity:0}
 .scene.loaded .mitem-in{animation:mitemin 1.4s cubic-bezier(.2,.8,.2,1) 1.6s forwards}
 @keyframes mitemin{from{opacity:0;filter:blur(14px)}to{opacity:1;filter:blur(0)}}
+.scene.loaded .mitem-in.grain{animation:none}
 .dx,.dy,.sw{animation-timing-function:cubic-bezier(.45,0,.55,1);animation-iteration-count:infinite;animation-direction:alternate}
 .dx{animation-name:dx}.dy{animation-name:dy}.sw{animation-name:sw}
 @keyframes dx{from{transform:translateX(calc(var(--ax) * -1))}to{transform:translateX(var(--ax))}}
