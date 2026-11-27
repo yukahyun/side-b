@@ -108,7 +108,15 @@ function fitStamps() {
     while (el.scrollWidth > el.clientWidth + 1 && fs > 9) { fs -= 1; el.style.fontSize = fs + 'px'; }
     min = Math.min(min, fs);
   });
-  els.forEach((el) => { el.style.fontSize = min + 'px'; });   // every card uses the same size
+  els.forEach((el) => { el.style.fontSize = min + 'px'; placeStamp(el); });   // every card uses the same size
+}
+// sit the caption halfway between the photo window and the bottom of the card
+function placeStamp(el) {
+  const card = el.parentElement, win = card.querySelector('.win');
+  if (!win) return;
+  const ch = card.getBoundingClientRect().height, wb = win.getBoundingClientRect().bottom - card.getBoundingClientRect().top;
+  if (!ch) return;
+  el.style.top = ((wb + ch) / 2 / ch * 100).toFixed(2) + '%'; el.style.bottom = 'auto';
 }
 window.addEventListener('resize', fitStamps);
 if (document.fonts) document.fonts.ready.then(fitStamps);
@@ -184,7 +192,7 @@ async function enterMemory(id, cell, btn, k) {
   fly.querySelectorAll('.tex').forEach((t) => t.remove());
   fly.insertAdjacentHTML('afterbegin', paper(k));
   $('fly-num').textContent = m.card.num; $('fly-date').textContent = m.card.date; $('fly-stamp').textContent = m.card.stamp; $('fly-img').src = m.card.photo;
-  const gs = cell.querySelector('.stamp'); if (gs) $('fly-stamp').style.fontSize = gs.style.fontSize;
+  const gs = cell.querySelector('.stamp'); if (gs) { $('fly-stamp').style.fontSize = gs.style.fontSize; $('fly-stamp').style.top = gs.style.top; $('fly-stamp').style.bottom = gs.style.bottom; }
   fly.className = 'flyslide card-dark'; fly.style.transition = 'none';
   setRect(fly, { l: r.left, t: r.top, w: r.width, h: r.height });
   $('memory').hidden = false; $('memory').classList.remove('closing');
