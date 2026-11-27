@@ -151,6 +151,7 @@ async function enterMemory(id, cell, btn, k) {
   if (busy) return; busy = true;
   const m = MEMORIES[id]; current = m; lastCell = cell; lastBtn = btn;
   playSwipe();
+  $('hazy').src = m.background;                       // load the street early so it's ready under the dots
   cell.dataset.busy = '1'; cell.classList.add('lifted');
   btn.style.transform = 'translateY(-118%) scale(1.04)';
   await wait(520);
@@ -171,67 +172,58 @@ async function enterMemory(id, cell, btn, k) {
   setRect(fly, C); fly.classList.add('centered');
   await wait(860);
 
-  // the photo fills the screen
-  const z = $('zoom'); z.src = m.card.photo; z.className = 'zoom';
-  setRect(z, { l: C.l + S * .14, t: C.t + S * .22, w: S * .72, h: S * .5 });
-  z.style.objectPosition = '50% 45%'; z.style.opacity = '0'; z.style.filter = 'blur(10px)';
-  z.style.webkitMaskSize = z.style.maskSize = '100% 100%';
-  void z.offsetWidth; z.classList.add('grow');
+  // a soft black oval fades in around the photo, then closes to black
+  const wr = fly.querySelector('.win').getBoundingClientRect();
+  const iris = $('iris'); iris.className = 'iris';
+  iris.style.setProperty('--cx', (wr.left + wr.width / 2) + 'px');
+  iris.style.setProperty('--cy', (wr.top + wr.height / 2) + 'px');
+  iris.style.setProperty('--rx', (wr.width * .62) + 'px');
+  iris.style.setProperty('--ry', (wr.height * .7) + 'px');
+  await wait(150);
   sfx.swell();
-  setRect(z, { l: 0, t: 0, w: vw, h: vh }); z.style.width = '100vw'; z.style.height = '100vh';
-  z.style.objectPosition = '50% 62%'; z.style.opacity = '1'; z.style.filter = 'blur(0)';
-  z.style.webkitMaskSize = z.style.maskSize = '320% 320%';
-  $('veil').classList.add('on'); fly.classList.add('gone');
+  void iris.offsetWidth; iris.classList.add('on');
+  await wait(1300);
+  iris.classList.add('close');
   await wait(1250);
 
-  // a soft black oval fades in around the photo, then closes to black
-  const iris = $('iris'); iris.className = 'iris';
-  void iris.offsetWidth; iris.classList.add('on');
-  await wait(1500);
-  iris.classList.add('close');
-  await wait(1500);
-
-  // the street dissolves in, a few dots at a time, like drifting into a dream
-  const h = $('hazy'); h.src = m.background; h.classList.add('dolly', 'on', 'instant');
-  z.style.opacity = '0'; z.classList.remove('grow');
-  await dreamIn();
-  iris.className = 'iris';
+  // the street dissolves in, in fine grains, like drifting into a dream
+  fly.classList.add('gone');
+  $('hazy').classList.add('dolly', 'on', 'instant');
   $('mem-title').textContent = m.title; $('mem-date').textContent = m.date; $('mem-blurb').textContent = m.blurb;
   setTrack(-1, true);
   buildItems(m);
   $('scene').hidden = false; void $('scene').offsetWidth; $('scene').classList.add('loaded');
+  const dream = dreamIn();
+  iris.style.transition = 'none'; iris.style.opacity = '0';
+  await dream;
+  iris.className = 'iris'; iris.style.transition = ''; iris.style.opacity = '';
   $('explore').focus({ preventScroll: true });
   busy = false;
 }
 
 function dreamIn() {
   return new Promise((done) => {
-    const cv = $('dream'), dpr = Math.min(2, window.devicePixelRatio || 1);
-    const W = window.innerWidth, H = window.innerHeight;
-    cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr);
+    const cv = $('dream');
+    const W = Math.round(window.innerWidth), H = Math.round(window.innerHeight);
+    cv.width = W; cv.height = H;
     const g = cv.getContext('2d');
-    g.setTransform(dpr, 0, 0, dpr, 0, 0);
-    g.globalCompositeOperation = 'source-over'; g.fillStyle = '#000'; g.fillRect(0, 0, W, H);
+    const img = g.createImageData(W, H), px = img.data, n = W * H;
+    const thr = new Float32Array(n);
+    for (let q = 0; q < n; q++) { thr[q] = Math.random(); px[q * 4 + 3] = 255; }
+    g.putImageData(img, 0, 0);
     cv.className = 'dream on';
-    $('iris').className = 'iris';                      // the canvas holds the black now
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) { cv.className = 'dream'; done(); return; }
-    g.globalCompositeOperation = 'destination-out';
-    const DUR = 3200, start = performance.now();
+    const DUR = 1000, SOFT = 0.12, start = performance.now();
     (function frame(now) {
-      const t = Math.min(1, (now - start) / DUR);
-      const ease = t * t;                               // slow at first, then faster
-      const count = Math.round(14 + ease * 140);
-      for (let k = 0; k < count; k++) {
-        const x = Math.random() * W, y = Math.random() * H;
-        const r = 2 + Math.random() * (4 + ease * 26);
-        const dot = g.createRadialGradient(x, y, 0, x, y, r);
-        dot.addColorStop(0, 'rgba(0,0,0,.9)'); dot.addColorStop(1, 'rgba(0,0,0,0)');
-        g.fillStyle = dot; g.beginPath(); g.arc(x, y, r, 0, Math.PI * 2); g.fill();
+      const t = Math.min(1, (now - start) / DUR) * (1 + SOFT);
+      for (let q = 0; q < n; q++) {
+        const a = (thr[q] - t + SOFT) / SOFT;            // each grain fades out over a short moment
+        px[q * 4 + 3] = a >= 1 ? 255 : a <= 0 ? 0 : a * 255;
       }
-      if (t < 1) requestAnimationFrame(frame);
-      else { cv.classList.add('fade'); setTimeout(() => { cv.className = 'dream'; done(); }, 900); }
+      g.putImageData(img, 0, 0);
+      if (t < 1 + SOFT) requestAnimationFrame(frame);
+      else { cv.className = 'dream'; done(); }
     })(start);
-    setTimeout(() => done(), DUR * 0.55);               // let the scene start appearing mid-dream
   });
 }
 
