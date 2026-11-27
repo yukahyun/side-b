@@ -7,11 +7,11 @@
    ============================================================ */
 const MEMORIES = {
   taiwan: {
-    card: { num: '01', date: 'oct 2026', stamp: 'TAIWAN TRIP', photo: 'assets/taiwan-photo.jpg' },
+    card: { num: '01', date: '10.26', stamp: 'last week of summer in taiwan', photo: 'assets/taiwan-photo.jpg' },
     background: 'assets/taiwan-hazy.webp',
-    title: 'taiwan trip',
-    date: 'october 2026',
-    blurb: 'this trip felt like a chance to start a new, a refreshing breathe of happiness',
+    title: 'summer in taiwan',
+    date: '10/2026',
+    blurb: 'a trip where i woke up excited for each new day. our days were packed with new experiences, yummy cheap bites, and great company :)',
     items: [
       { name: 'the balls', img: 'assets/balls.webp', note: '[why the balls go with this song]', z: 5,
         pos: { left: '76%', top: '50%', size: 'min(210px, 30vw)' }, mpos: { left: '80%', top: '64%', size: '28vw' },
@@ -19,16 +19,19 @@ const MEMORIES = {
       { name: 'the snails', img: 'assets/snails.webp', note: '[why the snails go with this song]',
         pos: { left: '20%', top: '44%', size: 'min(240px, 34vw)' }, mpos: { left: '20%', top: '64%', size: '30vw' },
         song: { title: 'Maybe Maybe', artist: 'The Chairs', cover: 'assets/cover-maybe.jpg', spotify: 'https://open.spotify.com/track/55e4I1RfHjQT1XAf7glB2J' } },
-      { name: 'the surfboards', img: 'assets/surfboards.webp', note: '[why the surfboards go with this song]', tilt: '-20deg',
+      { name: 'the surfboards', img: 'assets/surfboards.webp', label: 'location · waiao beach',
+        note: 'this was my first time surfing! i never knew something could feel so calming and so frightening at the same time. thankfully the waves were gentle, and i found out i have a great sense of balance!', tilt: '-20deg',
         pos: { left: '30%', top: '74%', size: 'min(380px, 44vw)' }, mpos: { left: '28%', top: '86%', size: '40vw' },
         song: { title: '海浪', artist: 'deca joins', cover: 'assets/cover-hailang.jpg', spotify: 'https://open.spotify.com/track/5EpLeWSwqOG0mZW0R4WdKQ' } },
-      { name: 'the lantern', img: 'assets/lantern.webp', note: '[why the lantern goes with this song]',
+      { name: 'the lantern', img: 'assets/lantern.webp', label: 'location · jiufen',
+        note: 'we took a bus up the steep, winding mountain road to Jiufen, and arrived just in time to catch the sunset (and snap a million photos)',
         pos: { left: '29%', top: '15%', size: 'min(230px, 32vw)' }, mpos: { left: '15%', top: '24%', size: '24vw' },
         song: { title: 'Bluebird', artist: '落日飛車 Sunset Rollercoaster', cover: 'assets/cover-bluebird.jpg', spotify: 'https://open.spotify.com/track/3jgZYDYIEthcx7BrDOzPCl' } },
       { name: 'the walking man', img: 'assets/walking-man.webp', note: '[why the walking man goes with this song]',
         pos: { left: '71%', top: '82%', size: 'min(240px, 32vw)' }, mpos: { left: '74%', top: '86%', size: '30vw' },
         song: { title: 'Vanilla', artist: '落日飛車 Sunset Rollercoaster', cover: 'assets/cover-vanilla.jpg', spotify: 'https://open.spotify.com/track/5GYVRgPzH63t7i0873LwYm' } },
-      { name: 'the mirror', img: 'assets/mirror.webp', note: '[why the mirror goes with this song]',
+      { name: 'the mirror', img: 'assets/mirror.webp', label: 'location · chengnan village',
+        note: "the first full day of our trip. we'd just finished surfing, then had what might be the best bowl of chicken noodle soup of my life, served right in front of someone's home",
         pos: { left: '72%', top: '16%', size: 'min(230px, 30vw)' }, mpos: { left: '84%', top: '26%', size: '24vw' },
         song: { title: 'Finger', artist: 'Elephant Gym', cover: 'assets/cover-finger.jpg', spotify: 'https://open.spotify.com/track/3Of8Z34kYIFKzm025HtkiH' } }
     ]
@@ -83,7 +86,43 @@ const sfx = {
   swell() { const c = audio(); if (!c) return; const t = c.currentTime, s = noise(c, 1.6), f = c.createBiquadFilter(), g = c.createGain(); f.type = 'lowpass'; f.frequency.setValueAtTime(300, t); f.frequency.exponentialRampToValueAtTime(1600, t + 1.2); env(g, t, .07, .4, 1.5); s.connect(f).connect(g).connect(c.destination); s.start(t); s.stop(t + 1.6); }
 };
 
+/* ---------- your recorded swipe, played when a card lifts out ---------- */
+const swipeSound = new Audio('assets/swipe.mp3');
+swipeSound.preload = 'auto';
+const dreamAudio = new Audio('assets/dream-swell.mp3');
+dreamAudio.preload = 'auto'; dreamAudio.volume = .9;
+function playDream() { try { dreamAudio.currentTime = 0; dreamAudio.play().catch(() => {}); } catch (e) {} }
+function stopDream() { try { dreamAudio.pause(); } catch (e) {} }
+
+function playSwipe() {
+  try { swipeSound.currentTime = 0; swipeSound.volume = 0.85; const p = swipeSound.play(); if (p) p.catch(() => sfx.rustle()); }
+  catch (e) { sfx.rustle(); }
+}
+
 /* ---------- the sheet ---------- */
+// card labels stay on one line: shrink the handwriting until it fits
+function fitStamps() {
+  const els = [...document.querySelectorAll('#grid .stamp')];
+  let min = Infinity;
+  els.forEach((el) => {
+    el.style.fontSize = '';
+    let fs = parseFloat(getComputedStyle(el).fontSize);
+    while (el.scrollWidth > el.clientWidth + 1 && fs > 9) { fs -= 1; el.style.fontSize = fs + 'px'; }
+    min = Math.min(min, fs);
+  });
+  els.forEach((el) => { el.style.fontSize = min + 'px'; placeStamp(el); });   // every card uses the same size
+}
+// sit the caption halfway between the photo window and the bottom of the card
+function placeStamp(el) {
+  const card = el.parentElement, win = card.querySelector('.win');
+  if (!win) return;
+  const ch = card.getBoundingClientRect().height, wb = win.getBoundingClientRect().bottom - card.getBoundingClientRect().top;
+  if (!ch) return;
+  el.style.top = ((wb + ch) / 2 / ch * 100).toFixed(2) + '%'; el.style.bottom = 'auto';
+}
+window.addEventListener('resize', fitStamps);
+if (document.fonts) document.fonts.ready.then(fitStamps);
+
 function buildGrid() {
   const grid = $('grid');
   GRID.forEach((id, k) => {
@@ -98,7 +137,7 @@ function buildGrid() {
     let inner = paper(k);
     if (id === 'readme') {
       btn.setAttribute('aria-label', 'Open read me');
-      inner += '<div class="labels" aria-hidden="true"><span>00</span><span>start here</span></div><div class="win open" aria-hidden="true"><span class="word">read me</span></div>';
+      inner += '<div class="labels" aria-hidden="true"><span>00</span><span>MM/YY</span></div><div class="win"><img src="assets/readme-photo.jpg" alt="" style="object-position:50% 50%"><span class="holo"></span></div><p class="stamp" aria-hidden="true">behind the moments</p>';
     } else {
       const c = MEMORIES[id].card;
       btn.setAttribute('aria-label', 'Open memory: ' + MEMORIES[id].title);
@@ -129,7 +168,7 @@ function buildGrid() {
 }
 
 /* ---------- read me ---------- */
-function openReadme() { sfx.rustle(); $('readme').hidden = false; $('readme-close').focus(); }
+function openReadme() { playSwipe(); $('readme').hidden = false; $('readme-close').focus(); }
 function closeReadme() { sfx.tap(); $('readme').hidden = true; }
 $('readme-close').addEventListener('click', closeReadme);
 $('readme').addEventListener('click', (e) => { if (e.target === $('readme') || e.target === $('readme').firstElementChild) closeReadme(); });
@@ -142,7 +181,9 @@ function setRect(el, r) { el.style.left = r.l + 'px'; el.style.top = r.t + 'px';
 async function enterMemory(id, cell, btn, k) {
   if (busy) return; busy = true;
   const m = MEMORIES[id]; current = m; lastCell = cell; lastBtn = btn;
-  sfx.rustle();
+  playSwipe();
+  playDream();                                        // starts with 1.4s of quiet, so the swell begins as the card lands
+  $('hazy').src = m.background;                       // load the street early so it's ready under the dots
   cell.dataset.busy = '1'; cell.classList.add('lifted');
   btn.style.transform = 'translateY(-118%) scale(1.04)';
   await wait(520);
@@ -153,6 +194,7 @@ async function enterMemory(id, cell, btn, k) {
   fly.querySelectorAll('.tex').forEach((t) => t.remove());
   fly.insertAdjacentHTML('afterbegin', paper(k));
   $('fly-num').textContent = m.card.num; $('fly-date').textContent = m.card.date; $('fly-stamp').textContent = m.card.stamp; $('fly-img').src = m.card.photo;
+  const gs = cell.querySelector('.stamp'); if (gs) { $('fly-stamp').style.fontSize = gs.style.fontSize; $('fly-stamp').style.top = gs.style.top; $('fly-stamp').style.bottom = gs.style.bottom; }
   fly.className = 'flyslide card-dark'; fly.style.transition = 'none';
   setRect(fly, { l: r.left, t: r.top, w: r.width, h: r.height });
   $('memory').hidden = false; $('memory').classList.remove('closing');
@@ -161,37 +203,95 @@ async function enterMemory(id, cell, btn, k) {
   const vw = window.innerWidth, vh = window.innerHeight, S = Math.min(380, vw * .62, vh * .62);
   const C = { l: (vw - S) / 2, t: (vh - S) / 2, w: S, h: S };
   setRect(fly, C); fly.classList.add('centered');
+  // the rest of the homepage fades to white as the card flies in
+  $('veil').classList.add('on');
   await wait(860);
 
-  // bloom the photo
-  const z = $('zoom'); z.src = m.card.photo; z.className = 'zoom';
-  setRect(z, { l: C.l + S * .14, t: C.t + S * .22, w: S * .72, h: S * .5 });
-  z.style.objectPosition = '50% 45%'; z.style.opacity = '0'; z.style.filter = 'blur(10px)';
-  z.style.webkitMaskSize = z.style.maskSize = '100% 100%';
-  void z.offsetWidth; z.classList.add('grow');
-  sfx.swell();
-  setRect(z, { l: 0, t: 0, w: vw, h: vh }); z.style.width = '100vw'; z.style.height = '100vh';
-  z.style.objectPosition = '50% 62%'; z.style.opacity = '1'; z.style.filter = 'blur(0)';
-  z.style.webkitMaskSize = z.style.maskSize = '320% 320%';
-  $('veil').classList.add('on'); fly.classList.add('gone');
-  await wait(1250);
-
-  // the scene
-  z.classList.add('dolly');
-  const h = $('hazy'); h.src = m.background; h.classList.add('dolly'); void h.offsetWidth; h.classList.add('on');
+  // timed to the soundtrack: the card crumbles on the first swell,
+  // a quiet white pause, then the street forms on the second swell
   $('mem-title').textContent = m.title; $('mem-date').textContent = m.date; $('mem-blurb').textContent = m.blurb;
   setTrack(-1, true);
+  await wait(300);
+  crumble(fly, 2000);
+  await wait(3700);
+  const formed = dreamIn($('hazy'));
+  await wait(450);
   buildItems(m);
   $('scene').hidden = false; void $('scene').offsetWidth; $('scene').classList.add('loaded');
+  await formed;
+  fly.classList.add('gone');
+  $('hazy').classList.add('on', 'instant'); $('dream').className = 'dream';
+  $('hazy').classList.add('dolly');
   $('explore').focus({ preventScroll: true });
   busy = false;
 }
 
+// grains: an SVG noise mask whose threshold moves, so an element appears or breaks up in fine dots
+let grainN = 0;
+function grain(el, mode, dur, seed) {
+  return new Promise((done) => {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) { done(); return; }
+    const id = 'gr' + (++grainN);
+    const f = $('dis').cloneNode(true);
+    f.id = id; f.querySelector('feTurbulence').setAttribute('seed', String(seed || grainN * 7));
+    const fn = f.querySelector('feFuncA'); fn.removeAttribute('id');
+    $('fx').append(f);
+    const set = (c) => fn.setAttribute('intercept', String(1 - 14 * c));  // grains whose noise is below c are hidden
+    set(mode === 'in' ? .92 : .18);
+    el.style.filter = `url(#${id})`;
+    const start = performance.now();
+    (function frame(now) {
+      const t = Math.min(1, (now - start) / dur);
+      set(mode === 'in' ? .92 - t * .74 : .18 + t * .74);
+      if (t < 1) { requestAnimationFrame(frame); return; }
+      if (mode === 'in') el.style.filter = '';
+      f.remove(); done();
+    })(start);
+  });
+}
+
+function crumble(el, dur) {
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) { el.classList.add('gone'); return; }
+  grain(el, 'out', dur || 1000, 7).then(() => { el.style.transition = 'none'; el.classList.add('gone'); el.style.visibility = 'hidden'; el.style.filter = ''; });
+}
+
+// the background appears one fine grain at a time
+async function dreamIn(src) {
+  const cv = $('dream');
+  const W = Math.round(window.innerWidth), H = Math.round(window.innerHeight);
+  try { await src.decode(); } catch (e) {}
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches || !src.naturalWidth) return;
+  cv.width = W; cv.height = H;
+  const g = cv.getContext('2d');
+  const iw = src.naturalWidth, ih = src.naturalHeight, sc = Math.max(W / iw, H / ih);
+  const dw = iw * sc, dh = ih * sc;
+  g.drawImage(src, (W - dw) * .5, (H - dh) * .62, dw, dh);   // same framing as the real background
+  const img = g.getImageData(0, 0, W, H), px = img.data, n = W * H;
+  const thr = new Float32Array(n);
+  for (let q = 0; q < n; q++) { thr[q] = Math.random(); px[q * 4 + 3] = 0; }
+  g.putImageData(img, 0, 0);
+  cv.className = 'dream on';
+  const DUR = 1300, SOFT = .12, start = performance.now();
+  await new Promise((done) => {
+    (function frame(now) {
+      const t = Math.min(1, (now - start) / DUR) * (1 + SOFT);
+      for (let q = 0; q < n; q++) {
+        const a = (t - thr[q]) / SOFT;                    // each grain fades in over a short moment
+        px[q * 4 + 3] = a >= 1 ? 255 : a <= 0 ? 0 : a * 255;
+      }
+      g.putImageData(img, 0, 0);
+      if (t < 1 + SOFT) requestAnimationFrame(frame); else done();
+    })(start);
+  });
+}
+
 async function exitMemory() {
+  stopDream();
   if (busy) return; busy = true;
   sfx.tap(); stopSpotify();
   $('memory').classList.add('closing');
   await wait(700);
+  $('dream').className = 'dream'; const f = $('fly'); f.style.filter = ''; f.style.visibility = ''; f.style.transition = '';
   $('memory').hidden = true; $('scene').hidden = true; $('scene').classList.remove('loaded');
   $('veil').classList.remove('on'); $('hazy').className = 'hazy'; $('zoom').className = 'zoom'; $('zoom').removeAttribute('style');
   $('items').innerHTML = '';
@@ -245,6 +345,13 @@ function buildItems(m) {
     b.addEventListener('click', () => { if (track !== i) setTrack(i); });
     wrap.append(el);
   });
+  // each object gathers out of fine dots, one after another in a loose random order
+  const order = [...wrap.children].sort(() => Math.random() - .5);
+  order.forEach((el, n) => {
+    const inner = el.querySelector('.mitem-in');
+    inner.classList.add('dotin');
+    setTimeout(() => { inner.style.opacity = '1'; grain(inner, 'in', 900 + Math.random() * 300, 11 + n * 5); }, 500 + n * 260 + Math.random() * 120);
+  });
 }
 
 /* ---------- spotify player (inside the tag) ---------- */
@@ -271,11 +378,24 @@ function stopSpotify() { spWanted = null; if (spCtl) spCtl.pause(); }
 
 /* ---------- cd player + tag ---------- */
 let flipT1 = null, flipT2 = null, discT = null;
+// shrink the player + tag just enough that the tag (with room for the spotify player) fits on short screens
+function fitPlayer() {
+  const col = document.querySelector('.playercol');
+  if (!col || isPhone()) { if (col) col.style.scale = ''; return; }
+  col.style.scale = '';
+  const r = col.getBoundingClientRect();
+  const spare = $('sp-wrap').hidden ? 92 : 0;        // keep space for the player so nothing jumps when it appears
+  const need = r.height + spare, room = window.innerHeight - r.top - 16;
+  col.style.scale = need > room ? String(Math.max(.6, room / need)) : '';
+}
+window.addEventListener('resize', fitPlayer);
+
 function fillTag(i) {
-  if (i < 0) { $('tag-idle').hidden = false; $('tag-playing').hidden = true; $('sp-wrap').hidden = true; return; }
+  if (i < 0) { $('tag-idle').hidden = false; $('tag-playing').hidden = true; $('sp-wrap').hidden = true; fitPlayer(); return; }
   const it = current.items[i];
-  $('np-thing').textContent = it.name; $('np-title').textContent = it.song.title; $('np-artist').textContent = it.song.artist; $('np-note').textContent = it.note;
+  $('np-label').textContent = it.label || ('now playing · ' + it.name); $('np-title').textContent = it.song.title; $('np-artist').textContent = it.song.artist; $('np-note').textContent = it.note;
   $('tag-idle').hidden = true; $('tag-playing').hidden = false;
+  fitPlayer();
 }
 function setTrack(i, silent) {
   track = i;
@@ -305,4 +425,4 @@ function setTrack(i, silent) {
   discT = setTimeout(() => { sfx.snap(); setTimeout(sfx.whir, 140); }, 860);
 }
 
-buildGrid();
+buildGrid(); fitStamps();
