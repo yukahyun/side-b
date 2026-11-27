@@ -100,11 +100,15 @@ function playSwipe() {
 /* ---------- the sheet ---------- */
 // card labels stay on one line: shrink the handwriting until it fits
 function fitStamps() {
-  document.querySelectorAll('.stamp').forEach((el) => {
+  const els = [...document.querySelectorAll('#grid .stamp')];
+  let min = Infinity;
+  els.forEach((el) => {
     el.style.fontSize = '';
     let fs = parseFloat(getComputedStyle(el).fontSize);
     while (el.scrollWidth > el.clientWidth + 1 && fs > 9) { fs -= 1; el.style.fontSize = fs + 'px'; }
+    min = Math.min(min, fs);
   });
+  els.forEach((el) => { el.style.fontSize = min + 'px'; });   // every card uses the same size
 }
 window.addEventListener('resize', fitStamps);
 if (document.fonts) document.fonts.ready.then(fitStamps);
