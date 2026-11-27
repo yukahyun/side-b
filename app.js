@@ -172,87 +172,65 @@ async function enterMemory(id, cell, btn, k) {
   setRect(fly, C); fly.classList.add('centered');
   await wait(860);
 
-  // a soft black oval fades in around the photo, then closes to black
-  const wr = fly.querySelector('.win').getBoundingClientRect();
-  const iris = $('iris');
-  await wait(150);
+  // the card crumbles into fine grains while the street forms grain by grain
+  await wait(120);
   sfx.swell();
-  await irisIn(iris, wr);
-  // the street dissolves in, in fine grains, like drifting into a dream
-  fly.classList.add('gone');
-  $('hazy').classList.add('dolly', 'on', 'instant');
   $('mem-title').textContent = m.title; $('mem-date').textContent = m.date; $('mem-blurb').textContent = m.blurb;
   setTrack(-1, true);
+  const formed = dreamIn($('hazy'));
+  crumble(fly);
+  await wait(450);
   buildItems(m);
   $('scene').hidden = false; void $('scene').offsetWidth; $('scene').classList.add('loaded');
-  const dream = dreamIn();
-  iris.className = 'iris';
-  await dream;
+  await formed;
+  fly.classList.add('gone');
+  $('hazy').classList.add('on', 'instant'); $('dream').className = 'dream';
+  $('hazy').classList.add('dolly');
   $('explore').focus({ preventScroll: true });
   busy = false;
 }
 
-// drawn frame by frame on a canvas so the oval moves smoothly
-function irisIn(cv, wr) {
-  return new Promise((done) => {
-    const dpr = Math.min(1.5, window.devicePixelRatio || 1);
-    const W = window.innerWidth, H = window.innerHeight;
-    cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr);
-    const g = cv.getContext('2d');
-    const cx = wr.left + wr.width / 2, cy = wr.top + wr.height / 2;
-    const rx = wr.width * .62, ry = wr.height * .7;
-    const ease = (t) => t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
-    const draw = (alpha, k) => {
-      g.setTransform(dpr, 0, 0, dpr, 0, 0);
-      g.clearRect(0, 0, W, H);
-      g.globalAlpha = alpha;
-      g.fillStyle = '#000'; g.fillRect(0, 0, W, H);
-      if (k > 0.002) {
-        g.globalCompositeOperation = 'destination-out';
-        g.translate(cx, cy); g.scale(rx * k, ry * k);
-        const hole = g.createRadialGradient(0, 0, 0, 0, 0, 1);
-        hole.addColorStop(0, 'rgba(0,0,0,1)'); hole.addColorStop(.55, 'rgba(0,0,0,1)');
-        hole.addColorStop(.85, 'rgba(0,0,0,.15)'); hole.addColorStop(1, 'rgba(0,0,0,0)');
-        g.fillStyle = hole; g.beginPath(); g.arc(0, 0, 1, 0, Math.PI * 2); g.fill();
-        g.globalCompositeOperation = 'source-over';
-      }
-    };
-    draw(0, 1.6);
-    cv.className = 'iris on';
-    const FADE = 800, HOLD = 450, CLOSE = 1300, start = performance.now();
-    (function frame(now) {
-      const e = now - start;
-      if (e < FADE) { const t = ease(e / FADE); draw(t, 1.6 - .6 * t); }
-      else if (e < FADE + HOLD) draw(1, 1);
-      else if (e < FADE + HOLD + CLOSE) draw(1, 1 - ease((e - FADE - HOLD) / CLOSE));
-      else { draw(1, 0); done(); return; }
-      requestAnimationFrame(frame);
-    })(start);
-  });
+// the card breaks up into fine grains (an SVG noise mask whose threshold rises)
+function crumble(el) {
+  const fn = $('dis-a'), DUR = 1000, start = performance.now();
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) { el.classList.add('gone'); return; }
+  fn.setAttribute('intercept', '1');
+  el.style.filter = 'url(#dis)';
+  (function frame(now) {
+    const t = Math.min(1, (now - start) / DUR);
+    const c = .18 + t * .72;                           // grains whose noise is below c vanish
+    fn.setAttribute('intercept', String(1 - 14 * c));
+    if (t < 1) requestAnimationFrame(frame);
+    else { el.style.transition = 'none'; el.classList.add('gone'); el.style.visibility = 'hidden'; el.style.filter = ''; }
+  })(start);
 }
 
-function dreamIn() {
-  return new Promise((done) => {
-    const cv = $('dream');
-    const W = Math.round(window.innerWidth), H = Math.round(window.innerHeight);
-    cv.width = W; cv.height = H;
-    const g = cv.getContext('2d');
-    const img = g.createImageData(W, H), px = img.data, n = W * H;
-    const thr = new Float32Array(n);
-    for (let q = 0; q < n; q++) { thr[q] = Math.random(); px[q * 4 + 3] = 255; }
-    g.putImageData(img, 0, 0);
-    cv.className = 'dream on';
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) { cv.className = 'dream'; done(); return; }
-    const DUR = 1000, SOFT = 0.12, start = performance.now();
+// the background appears one fine grain at a time
+async function dreamIn(src) {
+  const cv = $('dream');
+  const W = Math.round(window.innerWidth), H = Math.round(window.innerHeight);
+  try { await src.decode(); } catch (e) {}
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches || !src.naturalWidth) return;
+  cv.width = W; cv.height = H;
+  const g = cv.getContext('2d');
+  const iw = src.naturalWidth, ih = src.naturalHeight, sc = Math.max(W / iw, H / ih);
+  const dw = iw * sc, dh = ih * sc;
+  g.drawImage(src, (W - dw) * .5, (H - dh) * .62, dw, dh);   // same framing as the real background
+  const img = g.getImageData(0, 0, W, H), px = img.data, n = W * H;
+  const thr = new Float32Array(n);
+  for (let q = 0; q < n; q++) { thr[q] = Math.random(); px[q * 4 + 3] = 0; }
+  g.putImageData(img, 0, 0);
+  cv.className = 'dream on';
+  const DUR = 1300, SOFT = .12, start = performance.now();
+  await new Promise((done) => {
     (function frame(now) {
       const t = Math.min(1, (now - start) / DUR) * (1 + SOFT);
       for (let q = 0; q < n; q++) {
-        const a = (thr[q] - t + SOFT) / SOFT;            // each grain fades out over a short moment
+        const a = (t - thr[q]) / SOFT;                    // each grain fades in over a short moment
         px[q * 4 + 3] = a >= 1 ? 255 : a <= 0 ? 0 : a * 255;
       }
       g.putImageData(img, 0, 0);
-      if (t < 1 + SOFT) requestAnimationFrame(frame);
-      else { cv.className = 'dream'; done(); }
+      if (t < 1 + SOFT) requestAnimationFrame(frame); else done();
     })(start);
   });
 }
@@ -262,9 +240,9 @@ async function exitMemory() {
   sfx.tap(); stopSpotify();
   $('memory').classList.add('closing');
   await wait(700);
-  $('dream').className = 'dream';
+  $('dream').className = 'dream'; const f = $('fly'); f.style.filter = ''; f.style.visibility = ''; f.style.transition = '';
   $('memory').hidden = true; $('scene').hidden = true; $('scene').classList.remove('loaded');
-  $('veil').classList.remove('on'); $('hazy').className = 'hazy'; $('iris').className = 'iris'; $('zoom').className = 'zoom'; $('zoom').removeAttribute('style');
+  $('veil').classList.remove('on'); $('hazy').className = 'hazy'; $('zoom').className = 'zoom'; $('zoom').removeAttribute('style');
   $('items').innerHTML = '';
   if (lastBtn) { lastBtn.style.visibility = ''; lastBtn.style.transform = ''; lastBtn.classList.remove('up'); }
   if (lastCell) { delete lastCell.dataset.busy; lastCell.classList.remove('lifted'); }

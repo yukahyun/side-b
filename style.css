@@ -61,7 +61,7 @@ button{font:inherit;color:inherit}
 .memory.closing{opacity:0}
 .veil{position:absolute;inset:0;background:#fff;opacity:0;transition:opacity .9s ease}
 .veil.on{opacity:1}
-.flyslide{position:fixed;z-index:2;border-radius:10px;
+.flyslide{position:fixed;z-index:6;border-radius:10px;
   transition:left .8s cubic-bezier(.6,0,.2,1),top .8s cubic-bezier(.6,0,.2,1),width .8s cubic-bezier(.6,0,.2,1),height .8s cubic-bezier(.6,0,.2,1),box-shadow .8s ease,opacity .9s ease .25s}
 .flyslide.centered{box-shadow:0 40px 70px rgba(60,45,30,.28),0 8px 18px rgba(60,45,30,.16)}
 .flyslide.gone{opacity:0}
@@ -73,9 +73,7 @@ button{font:inherit;color:inherit}
 .hazy{position:fixed;inset:0;width:100vw;height:100vh;object-fit:cover;object-position:50% 62%;z-index:3;opacity:0;transition:opacity 1.8s ease}
 .hazy.on{opacity:1}
 .hazy.instant{transition:none}
-.iris{position:fixed;inset:0;width:100vw;height:100vh;z-index:4;pointer-events:none;display:none}
-.iris.on{display:block}
-.dream{position:fixed;inset:0;width:100vw;height:100vh;z-index:5;pointer-events:none;display:none}
+.dream{position:fixed;inset:0;width:100vw;height:100vh;z-index:3;pointer-events:none;display:none}
 .dream.on{display:block}
 .dream.fade{opacity:0;transition:opacity .9s ease}
 .dolly{transform-origin:50% 60%;animation:dolly 30s ease-in-out infinite alternate}

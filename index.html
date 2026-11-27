@@ -14,6 +14,12 @@
 <body>
 <svg aria-hidden="true" width="0" height="0" style="position:absolute">
   <defs id="fx">
+    <filter id="dis" x="-10%" y="-10%" width="120%" height="125%" color-interpolation-filters="sRGB">
+      <feTurbulence type="fractalNoise" baseFrequency=".85" numOctaves="2" seed="7" result="n"/>
+      <feColorMatrix in="n" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  1 0 0 0 0" result="a"/>
+      <feComponentTransfer in="a" result="m"><feFuncA id="dis-a" type="linear" slope="14" intercept="1"/></feComponentTransfer>
+      <feComposite in="SourceGraphic" in2="m" operator="in"/>
+    </filter>
     <filter id="pencil-text" x="-4%" y="-15%" width="108%" height="130%">
 <feTurbulence type="fractalNoise" baseFrequency="0.7" numOctaves="2" seed="5" result="w"></feTurbulence>
 <feDisplacementMap in="SourceGraphic" in2="w" scale="1.4" xChannelSelector="R" yChannelSelector="G" result="rough"></feDisplacementMap>
@@ -80,7 +86,6 @@
   </div>
   <img class="zoom" id="zoom" alt="">
   <img class="hazy" id="hazy" alt="">
-  <canvas class="iris" id="iris" aria-hidden="true"></canvas>
   <canvas class="dream" id="dream" aria-hidden="true"></canvas>
   <div class="scene" id="scene" hidden>
     <button class="explore" id="explore" type="button">explore more</button>
