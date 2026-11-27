@@ -29,7 +29,8 @@ const MEMORIES = {
       { name: 'the walking man', img: 'assets/walking-man.webp', note: '[why the walking man goes with this song]',
         pos: { left: '71%', top: '82%', size: 'min(240px, 32vw)' }, mpos: { left: '74%', top: '86%', size: '30vw' },
         song: { title: 'Vanilla', artist: '落日飛車 Sunset Rollercoaster', cover: 'assets/cover-vanilla.jpg', spotify: 'https://open.spotify.com/track/5GYVRgPzH63t7i0873LwYm' } },
-      { name: 'the mirror', img: 'assets/mirror.webp', note: '[why the mirror goes with this song]',
+      { name: 'the mirror', img: 'assets/mirror.webp', label: 'location · chengnan village',
+        note: "the first full day of our trip. we'd just finished surfing, then had what might be the best bowl of chicken noodle soup of my life, served right in front of someone's home",
         pos: { left: '72%', top: '16%', size: 'min(230px, 30vw)' }, mpos: { left: '84%', top: '26%', size: '24vw' },
         song: { title: 'Finger', artist: 'Elephant Gym', cover: 'assets/cover-finger.jpg', spotify: 'https://open.spotify.com/track/3Of8Z34kYIFKzm025HtkiH' } }
     ]
