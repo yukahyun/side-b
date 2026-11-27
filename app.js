@@ -174,18 +174,10 @@ async function enterMemory(id, cell, btn, k) {
 
   // a soft black oval fades in around the photo, then closes to black
   const wr = fly.querySelector('.win').getBoundingClientRect();
-  const iris = $('iris'); iris.className = 'iris';
-  iris.style.setProperty('--cx', (wr.left + wr.width / 2) + 'px');
-  iris.style.setProperty('--cy', (wr.top + wr.height / 2) + 'px');
-  iris.style.setProperty('--rx', (wr.width * .62) + 'px');
-  iris.style.setProperty('--ry', (wr.height * .7) + 'px');
+  const iris = $('iris');
   await wait(150);
   sfx.swell();
-  void iris.offsetWidth; iris.classList.add('on');
-  await wait(1300);
-  iris.classList.add('close');
-  await wait(1250);
-
+  await irisIn(iris, wr);
   // the street dissolves in, in fine grains, like drifting into a dream
   fly.classList.add('gone');
   $('hazy').classList.add('dolly', 'on', 'instant');
@@ -194,11 +186,49 @@ async function enterMemory(id, cell, btn, k) {
   buildItems(m);
   $('scene').hidden = false; void $('scene').offsetWidth; $('scene').classList.add('loaded');
   const dream = dreamIn();
-  iris.style.transition = 'none'; iris.style.opacity = '0';
+  iris.className = 'iris';
   await dream;
-  iris.className = 'iris'; iris.style.transition = ''; iris.style.opacity = '';
   $('explore').focus({ preventScroll: true });
   busy = false;
+}
+
+// drawn frame by frame on a canvas so the oval moves smoothly
+function irisIn(cv, wr) {
+  return new Promise((done) => {
+    const dpr = Math.min(1.5, window.devicePixelRatio || 1);
+    const W = window.innerWidth, H = window.innerHeight;
+    cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr);
+    const g = cv.getContext('2d');
+    const cx = wr.left + wr.width / 2, cy = wr.top + wr.height / 2;
+    const rx = wr.width * .62, ry = wr.height * .7;
+    const ease = (t) => t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+    const draw = (alpha, k) => {
+      g.setTransform(dpr, 0, 0, dpr, 0, 0);
+      g.clearRect(0, 0, W, H);
+      g.globalAlpha = alpha;
+      g.fillStyle = '#000'; g.fillRect(0, 0, W, H);
+      if (k > 0.002) {
+        g.globalCompositeOperation = 'destination-out';
+        g.translate(cx, cy); g.scale(rx * k, ry * k);
+        const hole = g.createRadialGradient(0, 0, 0, 0, 0, 1);
+        hole.addColorStop(0, 'rgba(0,0,0,1)'); hole.addColorStop(.55, 'rgba(0,0,0,1)');
+        hole.addColorStop(.85, 'rgba(0,0,0,.15)'); hole.addColorStop(1, 'rgba(0,0,0,0)');
+        g.fillStyle = hole; g.beginPath(); g.arc(0, 0, 1, 0, Math.PI * 2); g.fill();
+        g.globalCompositeOperation = 'source-over';
+      }
+    };
+    draw(0, 1.6);
+    cv.className = 'iris on';
+    const FADE = 800, HOLD = 450, CLOSE = 1300, start = performance.now();
+    (function frame(now) {
+      const e = now - start;
+      if (e < FADE) { const t = ease(e / FADE); draw(t, 1.6 - .6 * t); }
+      else if (e < FADE + HOLD) draw(1, 1);
+      else if (e < FADE + HOLD + CLOSE) draw(1, 1 - ease((e - FADE - HOLD) / CLOSE));
+      else { draw(1, 0); done(); return; }
+      requestAnimationFrame(frame);
+    })(start);
+  });
 }
 
 function dreamIn() {
