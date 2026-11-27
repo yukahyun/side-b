@@ -1,4 +1,4 @@
-# side b: a feelings archive
+# side b: an archive of memories and feelings
 
 A small static site with no build step. Open `index.html` to view it.
 
