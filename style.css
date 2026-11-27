@@ -115,7 +115,7 @@ button{font:inherit;color:inherit}
 .tag-card{position:relative;padding:24px 20px 20px;display:flex;flex-direction:column;gap:12px}
 .tag-paper{position:absolute;inset:0;background:#FBF7F0;border:2px dashed #B8AA9A;filter:url(#pencil-edge)}
 .tag-words{position:relative;display:flex;flex-direction:column;gap:6px}
-.sp-wrap{position:relative;height:80px;border-radius:12px;overflow:hidden}
+.sp-wrap{position:relative;height:80px;border-radius:12px;overflow:hidden;margin:4px 0 2px}
 .sp-wrap iframe{display:block;width:100%;height:80px;border:0;border-radius:12px}
 .punch{position:absolute;z-index:1;left:50%;top:9px;width:10px;height:10px;margin-left:-5px;border-radius:50%;background:rgba(184,170,154,.45);box-shadow:inset 0 1px 2px rgba(90,70,50,.4)}
 .tag-card h2{margin:0;font-weight:400;font-size:32px;line-height:1.05}

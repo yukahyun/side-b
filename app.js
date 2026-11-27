@@ -396,7 +396,7 @@ window.addEventListener('resize', fitPlayer);
 function fillTag(i) {
   if (i < 0) { $('tag-idle').hidden = false; $('tag-playing').hidden = true; $('sp-wrap').hidden = true; fitPlayer(); return; }
   const it = current.items[i];
-  $('np-label').textContent = it.label || ''; $('np-label').hidden = !it.label; $('np-title').textContent = it.song.title; $('np-artist').textContent = it.song.artist; $('np-note').textContent = it.note;
+  $('np-label').textContent = it.label || ''; $('np-label').hidden = !it.label; $('np-note').textContent = it.note;
   $('tag-idle').hidden = true; $('tag-playing').hidden = false;
   // the story eases in once the tag has turned around
   ['np-label', 'np-note'].forEach((id) => { const el = $(id); el.classList.remove('story-in'); void el.offsetWidth; el.classList.add('story-in'); });
