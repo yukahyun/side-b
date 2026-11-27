@@ -13,7 +13,8 @@ const MEMORIES = {
     date: '10/2026',
     blurb: 'a trip where i woke up excited for each new day. our days were packed with new experiences, yummy cheap bites, and great company :)',
     items: [
-      { name: 'the balls', img: 'assets/balls.webp', note: '[why the balls go with this song]', z: 5,
+      { name: 'the balls', img: 'assets/balls.webp', label: 'location · hayashi dept store',
+        note: 'i spent so much time wandering through every floor of this department store, wanting to buy everything i saw. it was such a nice, cool break from the heat and humidity.', z: 5,
         pos: { left: '76%', top: '50%', size: 'min(210px, 30vw)' }, mpos: { left: '80%', top: '64%', size: '28vw' },
         song: { title: 'Oh, My Life', artist: 'Cosmos People', cover: 'assets/cover-ohmylife.jpg', spotify: 'https://open.spotify.com/track/3Tflpdjw8qA8WjYR3FgYmq' } },
       { name: 'the snails', img: 'assets/snails.webp', note: '[why the snails go with this song]',
