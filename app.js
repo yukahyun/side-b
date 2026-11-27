@@ -9,9 +9,9 @@ const MEMORIES = {
   taiwan: {
     card: { num: '01', date: 'oct 2026', stamp: 'TAIWAN TRIP', photo: 'assets/taiwan-photo.jpg' },
     background: 'assets/taiwan-hazy.webp',
-    title: 'taiwan trip',
-    date: 'october 2026',
-    blurb: 'this trip felt like a chance to start a new, a refreshing breathe of happiness',
+    title: 'summer in taiwan',
+    date: '10/2026',
+    blurb: 'a trip where i woke up excited for each new day. our days were packed with new experiences, yummy cheap bites, and great company :)',
     items: [
       { name: 'the balls', img: 'assets/balls.webp', note: '[why the balls go with this song]', z: 5,
         pos: { left: '76%', top: '50%', size: 'min(210px, 30vw)' }, mpos: { left: '80%', top: '64%', size: '28vw' },
