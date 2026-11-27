@@ -86,6 +86,11 @@ const sfx = {
 /* ---------- your recorded swipe, played when a card lifts out ---------- */
 const swipeSound = new Audio('assets/swipe.mp3');
 swipeSound.preload = 'auto';
+const dreamAudio = new Audio('assets/dream-swell.mp3');
+dreamAudio.preload = 'auto'; dreamAudio.volume = .9;
+function playDream() { try { dreamAudio.currentTime = 0; dreamAudio.play().catch(() => {}); } catch (e) {} }
+function stopDream() { try { dreamAudio.pause(); } catch (e) {} }
+
 function playSwipe() {
   try { swipeSound.currentTime = 0; swipeSound.volume = 0.85; const p = swipeSound.play(); if (p) p.catch(() => sfx.rustle()); }
   catch (e) { sfx.rustle(); }
@@ -151,6 +156,7 @@ async function enterMemory(id, cell, btn, k) {
   if (busy) return; busy = true;
   const m = MEMORIES[id]; current = m; lastCell = cell; lastBtn = btn;
   playSwipe();
+  playDream();                                        // starts with 1.4s of quiet, so the swell begins as the card lands
   $('hazy').src = m.background;                       // load the street early so it's ready under the dots
   cell.dataset.busy = '1'; cell.classList.add('lifted');
   btn.style.transform = 'translateY(-118%) scale(1.04)';
@@ -173,14 +179,15 @@ async function enterMemory(id, cell, btn, k) {
   // the rest of the homepage fades to white as the card flies in
   $('veil').classList.add('on');
   await wait(860);
-  await wait(250);
 
-  // the card crumbles into fine grains while the street forms grain by grain
-  sfx.swell();
+  // timed to the soundtrack: the card crumbles on the first swell,
+  // a quiet white pause, then the street forms on the second swell
   $('mem-title').textContent = m.title; $('mem-date').textContent = m.date; $('mem-blurb').textContent = m.blurb;
   setTrack(-1, true);
+  await wait(300);
+  crumble(fly, 2000);
+  await wait(4450);
   const formed = dreamIn($('hazy'));
-  crumble(fly);
   await wait(450);
   buildItems(m);
   $('scene').hidden = false; void $('scene').offsetWidth; $('scene').classList.add('loaded');
@@ -216,9 +223,9 @@ function grain(el, mode, dur, seed) {
   });
 }
 
-function crumble(el) {
+function crumble(el, dur) {
   if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) { el.classList.add('gone'); return; }
-  grain(el, 'out', 1000, 7).then(() => { el.style.transition = 'none'; el.classList.add('gone'); el.style.visibility = 'hidden'; el.style.filter = ''; });
+  grain(el, 'out', dur || 1000, 7).then(() => { el.style.transition = 'none'; el.classList.add('gone'); el.style.visibility = 'hidden'; el.style.filter = ''; });
 }
 
 // the background appears one fine grain at a time
@@ -252,6 +259,7 @@ async function dreamIn(src) {
 }
 
 async function exitMemory() {
+  stopDream();
   if (busy) return; busy = true;
   sfx.tap(); stopSpotify();
   $('memory').classList.add('closing');
