@@ -98,6 +98,17 @@ function playSwipe() {
 }
 
 /* ---------- the sheet ---------- */
+// card labels stay on one line: shrink the handwriting until it fits
+function fitStamps() {
+  document.querySelectorAll('.stamp').forEach((el) => {
+    el.style.fontSize = '';
+    let fs = parseFloat(getComputedStyle(el).fontSize);
+    while (el.scrollWidth > el.clientWidth + 1 && fs > 9) { fs -= 1; el.style.fontSize = fs + 'px'; }
+  });
+}
+window.addEventListener('resize', fitStamps);
+if (document.fonts) document.fonts.ready.then(fitStamps);
+
 function buildGrid() {
   const grid = $('grid');
   GRID.forEach((id, k) => {
@@ -169,6 +180,7 @@ async function enterMemory(id, cell, btn, k) {
   fly.querySelectorAll('.tex').forEach((t) => t.remove());
   fly.insertAdjacentHTML('afterbegin', paper(k));
   $('fly-num').textContent = m.card.num; $('fly-date').textContent = m.card.date; $('fly-stamp').textContent = m.card.stamp; $('fly-img').src = m.card.photo;
+  const gs = cell.querySelector('.stamp'); if (gs) $('fly-stamp').style.fontSize = gs.style.fontSize;
   fly.className = 'flyslide card-dark'; fly.style.transition = 'none';
   setRect(fly, { l: r.left, t: r.top, w: r.width, h: r.height });
   $('memory').hidden = false; $('memory').classList.remove('closing');
@@ -399,4 +411,4 @@ function setTrack(i, silent) {
   discT = setTimeout(() => { sfx.snap(); setTimeout(sfx.whir, 140); }, 860);
 }
 
-buildGrid();
+buildGrid(); fitStamps();

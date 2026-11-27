@@ -40,7 +40,7 @@ button{font:inherit;color:inherit}
 .win.open{box-shadow:none;background:none;overflow:visible;display:flex;align-items:center;justify-content:center;text-align:center;font-size:40px;line-height:1;color:#EFE8DC}
 .win.open::after{display:none}
 .win.open span.word{filter:url(#pencil-text)}
-.stamp{position:absolute;bottom:5%;left:8%;right:8%;margin:0;text-align:center;font-size:24px;line-height:1.1;color:#EFE8DC;white-space:pre-line}
+.stamp{position:absolute;bottom:5%;left:8%;right:8%;margin:0;text-align:center;font-family:'Nanum Pen Script','Gaegu',cursive;font-size:30px;line-height:1.1;color:#EFE8DC;white-space:nowrap;transform:rotate(-1.5deg)}
 
 /* ---------- read me ---------- */
 .readme{position:fixed;inset:0;z-index:40;background:rgba(22,18,16,.84);backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;padding:40px 24px;overflow:auto;animation:fadein .45s ease}
