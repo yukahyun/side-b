@@ -170,11 +170,10 @@ async function enterMemory(id, cell, btn, k) {
   const vw = window.innerWidth, vh = window.innerHeight, S = Math.min(380, vw * .62, vh * .62);
   const C = { l: (vw - S) / 2, t: (vh - S) / 2, w: S, h: S };
   setRect(fly, C); fly.classList.add('centered');
-  await wait(860);
-
-  // the rest of the homepage fades to white around the card
+  // the rest of the homepage fades to white as the card flies in
   $('veil').classList.add('on');
-  await wait(900);
+  await wait(860);
+  await wait(250);
 
   // the card crumbles into fine grains while the street forms grain by grain
   sfx.swell();

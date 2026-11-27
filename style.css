@@ -59,7 +59,7 @@ button{font:inherit;color:inherit}
 /* ---------- memory ---------- */
 .memory{position:fixed;inset:0;z-index:50;transition:opacity .7s ease}
 .memory.closing{opacity:0}
-.veil{position:absolute;inset:0;background:#fff;opacity:0;transition:opacity .9s ease}
+.veil{position:absolute;inset:0;background:#fff;opacity:0;transition:opacity .5s ease}
 .veil.on{opacity:1}
 .flyslide{position:fixed;z-index:6;border-radius:10px;
   transition:left .8s cubic-bezier(.6,0,.2,1),top .8s cubic-bezier(.6,0,.2,1),width .8s cubic-bezier(.6,0,.2,1),height .8s cubic-bezier(.6,0,.2,1),box-shadow .8s ease,opacity .9s ease .25s}
