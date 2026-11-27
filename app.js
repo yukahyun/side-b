@@ -7,7 +7,7 @@
    ============================================================ */
 const MEMORIES = {
   taiwan: {
-    card: { num: '01', date: 'oct 2026', stamp: 'TAIWAN TRIP', photo: 'assets/taiwan-photo.jpg' },
+    card: { num: '01', date: '10.26', stamp: 'SUMMER IN TAIWAN', photo: 'assets/taiwan-photo.jpg' },
     background: 'assets/taiwan-hazy.webp',
     title: 'summer in taiwan',
     date: '10/2026',
