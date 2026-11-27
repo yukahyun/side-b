@@ -154,11 +154,8 @@ button{font:inherit;color:inherit}
   .grid .win.open{font-size:18px}
   .readme-words h2{font-size:24px}
   .readme-words p{font-size:13.5px}
-  .playercol{left:50%;top:116px;transform:translateX(-50%) scale(.6);transform-origin:top center;animation:none}
+  .playercol{left:50%;top:96px;transform:translateX(-50%) scale(.55);transform-origin:top center;animation:none}
   .explore{font-size:20px;top:12px}
-  /* on phones the page scrolls, so the objects sit below the tag instead of under it */
-  .scene{overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch}
-  .items{bottom:auto;height:max(100%,1120px)}
 }
 @media (prefers-reduced-motion:reduce){
   .dx,.dy,.sw,.dolly,.sway,.disc{animation:none}
